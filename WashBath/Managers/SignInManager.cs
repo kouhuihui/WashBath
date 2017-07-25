@@ -1,0 +1,106 @@
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security;
+using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using WashBath.Core.Models;
+using WashBath.Store;
+
+namespace WashBath.Managers
+{
+    public class SignInManager : SignInManager<SaleUser>
+    {
+        public SignInManager(UserManager manager) : base(manager)
+        {
+        }
+        public SignInManager(SaleUserStore store)
+          : base(store)
+        {
+        }
+    }
+
+    public class SignInManager<TUser> where TUser : SaleUser
+    {
+        UserManager<TUser> m_UserManager;
+
+        public SignInManager(UserManager<TUser> manager)
+        {
+            m_UserManager = manager;
+        }
+
+        public SignInManager(SaleUserStore<TUser> store)
+        {
+            m_UserManager = new UserManager<TUser>(store);
+        }
+
+        public virtual async Task<SignInResult> PasswordSignInAsync(IAuthenticationManager manager, string userName, string password, bool isPersistent)
+        {
+            var user = await m_UserManager.FindByNameAsync(userName);
+            var result = await PasswordSignInAsync(manager, password, isPersistent, user);
+
+            return result;
+        }
+
+        public virtual async Task<SignInResult> UserNameSignInAsync(IAuthenticationManager manager, string userName, bool isPersistent)
+        {
+            var user = await m_UserManager.FindByNameAsync(userName);
+            if (user == null)
+                return SignInResult.Failure;
+
+            switch (user.Status)
+            {
+                case UserStatus.Disabled:
+                    return SignInResult.Disabled;
+                case UserStatus.Normal:
+                    break;
+                default:
+                    throw new NotSupportedException("不受支持的用户状态");
+            }
+
+            SignIn(manager, user, isPersistent);
+            return SignInResult.Success;
+        }
+
+        async Task<SignInResult> PasswordSignInAsync(IAuthenticationManager manager, string password, bool isPersistent, TUser user)
+        {
+            if (user == null)
+                return SignInResult.Failure;
+
+            //if (await m_UserManager.IsLockedOutAsync(user.Id))
+            //    return SignInResult.LockedOut;
+
+            if (await m_UserManager.CheckPasswordAsync(user, password))
+            {
+                //await m_UserManager.ResetAccessFailedCountAsync(user.Id);
+                switch (user.Status)
+                {
+                    case UserStatus.Disabled:
+                        return SignInResult.Disabled;
+                    case UserStatus.Normal:
+                        break;
+                    default:
+                        throw new NotSupportedException("不受支持的用户状态");
+                }
+
+                SignIn(manager, user, isPersistent);
+                return SignInResult.Success;
+            }
+
+            //await m_UserManager.AccessFailedAsync(user.Id);
+            //if (await m_UserManager.IsLockedOutAsync(user.Id))
+            //    return SignInResult.LockedOut;
+
+            return SignInResult.Failure;
+        }
+
+        public virtual void SignIn(IAuthenticationManager manager, TUser user, bool isPersistent)
+        {
+            manager.SignOut(DefaultAuthenticationTypes.ExternalCookie, DefaultAuthenticationTypes.TwoFactorCookie);
+            var identity = new ClaimsIdentity(user.GetUserClaims(), DefaultAuthenticationTypes.ApplicationCookie);
+            var authAuthenticationCookieExpiresInDays = 7;
+            var properties = new AuthenticationProperties { IsPersistent = isPersistent, ExpiresUtc = DateTimeOffset.Now.AddDays(authAuthenticationCookieExpiresInDays) };
+            manager.SignIn(properties, identity);
+            manager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+        }
+    }
+}
