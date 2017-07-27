@@ -98,18 +98,17 @@
     <Compile Include="Models\Role.cs" />
     <Compile Include="Models\RoleMenu.cs" />
     <Compile Include="Models\SignInResult.cs" />
-    <Compile Include="Models\Test.cs" />
     <Compile Include="Models\WashBathClaimTypes.cs" />
     <Compile Include="Models\SaleUser.cs" />
     <Compile Include="Models\SerialNumber.cs" />
     <Compile Include="Models\SystemMenu.cs" />
     <Compile Include="Models\User.cs" />
-    <Compile Include="Models\UserStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SaleManagentConstants.cs" />
     <Compile Include="Services\WashBathSerivce.cs" />
     <Compile Include="Store\WashBathDbContext.cs" />
-    <Compile Include="ViewModel\PagingRequest.cs" />
+    <Compile Include="ViewModes\PagingRequest.cs" />
+    <Compile Include="ViewModes\UserStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

@@ -1,11 +1,11 @@
-﻿using Microsoft.Owin;
+﻿using AutoMapper;
+using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
 using System;
 using System.Web.Http;
-using System.Web.Mvc;
-using System.Web.Optimization;
-using System.Web.Routing;
+using WashBath.Core.Models;
+using WashBath.Open.Models.User;
 using WashBath.Open.Providers;
 
 [assembly: OwinStartup(typeof(WashBath.Open.Startup))]
@@ -18,14 +18,10 @@ namespace WashBath.Open
         {
             HttpConfiguration config = new HttpConfiguration();
             ConfigureOAuth(app);
+            ConfigureAutoMapper();
 
             WebApiConfig.Register(config);
             app.UseWebApi(config);
- 
-            //AreaRegistration.RegisterAllAreas();
-            //FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-            //RouteConfig.RegisterRoutes(RouteTable.Routes);
-            //BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
 
         public void ConfigureOAuth(IAppBuilder app)
@@ -42,6 +38,13 @@ namespace WashBath.Open
             app.UseOAuthAuthorizationServer(OAuthServerOptions);
             app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
 
+        }
+        void ConfigureAutoMapper()
+        {
+            Mapper.Initialize(cfg =>
+            {
+                //cfg.CreateMap<SaleUser, UserListItemViewModel>().ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role == null ? "" : src.Role.Name));
+            });
         }
     }
 }

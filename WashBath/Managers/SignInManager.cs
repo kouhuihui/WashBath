@@ -4,6 +4,7 @@ using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WashBath.Core.Models;
+using WashBath.Core.ViewModes;
 using WashBath.Store;
 
 namespace WashBath.Managers

@@ -16,7 +16,6 @@ namespace WashBath.Core.Store
 
         public IDbSet<SaleUser> SaleUsers { get; set; }
 
-        public IDbSet<Test> Tests { get; set; }
         //public IDbSet<Department> Departments { get; set; }
 
         //public IDbSet<FileInfo> FileInfos { get; set; }

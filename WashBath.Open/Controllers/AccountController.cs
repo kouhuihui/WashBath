@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using WashBath.Core.Models;
+using WashBath.Core.ViewModes;
 using WashBath.Managers;
 using WashBath.Open.Models;
 using WashBath.Open.Providers;

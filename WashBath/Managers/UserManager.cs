@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WashBath.Core;
 using WashBath.Core.Models;
+using WashBath.Core.ViewModes;
 using WashBath.Store;
 
 namespace WashBath.Managers
@@ -108,7 +109,7 @@ namespace WashBath.Managers
             return InvokedResult.SucceededResult;
         }
 
-        public async Task<Paging<TUser>> GetCustomersAsync(int start, int take, Func<IQueryable<TUser>, IQueryable<TUser>> filter = null)
+        public async Task<Paging<TUser>> GetSaleUsersAsync(int start, int take, Func<IQueryable<TUser>, IQueryable<TUser>> filter = null)
         {
             var query = Users.AsQueryable();
             if (filter != null)
@@ -121,7 +122,7 @@ namespace WashBath.Managers
             return new Paging<TUser>(start, take, total, list);
         }
 
-        public async Task<IEnumerable<TUser>> GetAllCustomersAsync()
+        public async Task<IEnumerable<TUser>> GetSaleUsersAsync()
         {
             var query = Users.Where(u => u.Status == UserStatus.Normal);
             return await query.OrderByDescending(u => u.Created).ThenByDescending(u => u.Name).ToListAsync();
